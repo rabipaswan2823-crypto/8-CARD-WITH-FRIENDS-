@@ -1078,8 +1078,18 @@ export default function App() {
     let reshuffleCount = roomState.reshuffleCount || 0;
     let drawnCard = null;
     let logPrefix = '';
+    let nextIndicatorCard = roomState.indicatorCard;
+    
+    if (source === 'indicator') {
+  if (roomState.turnsCompleted !== 0 || !roomState.indicatorCard) {
+    showToast('Only allowed on 1st turn!');
+    return;
+  }
+  drawnCard = roomState.indicatorCard;
+  nextIndicatorCard = null;
+  logPrefix = `${myPlayer.name} drew the Indicator Card`;
+} else if (source === 'open') {
 
-    if (source === 'open') {
       if (open.length < 2) {
         showToast('No previous Open Card available on Turn 1. Draw from Unopen Pile.');
         return;
@@ -1138,6 +1148,8 @@ export default function App() {
       hands: { ...roomState.hands, [user.uid]: nextHand },
       unopenPile: unopen,
       openPile: open,
+      indicatorCard: nextIndicatorCard,
+      
       reshuffleCount,
       turnIndex: (roomState.turnIndex + 1) % 4,
       turnsCompleted: nextTurns,
