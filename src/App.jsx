@@ -255,9 +255,10 @@ function isWildJoker(card, jokerRank) {
 }
 
 function cardPoints(card, jokerRank) {
-  if (isWildJoker(card, jokerRank)) return 0;
-  if (card.rank === 1 || card.rank >= 11) return 10;
-  return card.rank;
+  if function cardPoints(card, jokerRank) {
+  return 1;
+}
+
 }
 
 function cardLabel(card) {
