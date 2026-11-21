@@ -1051,13 +1051,6 @@ export default function App() {
     sfx.play('card');
     setSelectedCardIds([]);
 
-    if (remainingHand.length === 0) {
-  await finishRound(
-    { ...roomState, hands: { ... } },
-    { type: 'win', winnerId: user... }
-  );
-  return;
-    }
     
 
     await writeEncryptedRoom(roomCode, aesKey, {
