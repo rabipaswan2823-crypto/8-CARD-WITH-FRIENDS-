@@ -1,0 +1,49 @@
+name: Build Android APK (No PC Needed)
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Install dependencies & build web app
+        run: |
+          npm install
+          npm run build
+
+      - name: Add Capacitor Android & apply Camera/Mic patches
+        run: |
+          npx cap add android
+          cp android-patches/MainActivity.java android/app/src/main/java/com/eightcard/friends/MainActivity.java
+          python3 android-patches/patch_manifest.py
+          npx cap sync android
+
+      - name: Compile Debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Upload Downloadable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: 8-Card-With-Friends-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
