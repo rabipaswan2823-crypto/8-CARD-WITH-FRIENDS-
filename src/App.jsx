@@ -255,11 +255,11 @@ function isWildJoker(card, jokerRank) {
 }
 
 function cardPoints(card, jokerRank) {
-  if function cardPoints(card, jokerRank) {
+  
   return 1;
 }
 
-}
+
 
 function cardLabel(card) {
   return `${RANK_LABEL[card.rank]}${SUIT_SYMBOL[card.suit]}`;
