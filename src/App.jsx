@@ -1038,6 +1038,30 @@ export default function App() {
       prev.includes(cardId) ? prev.filter((id) => id !== cardId) : [...prev, cardId]
     );
   };
+    const [handOrder, setHandOrder] = useState([]);
+  const [dragCardId, setDragCardId] = useState(null);
+
+  const getOrderedHand = (cards = []) =>
+    [...cards].sort((a, b) => {
+      const ia = handOrder.indexOf(a.id);
+      const ib = handOrder.indexOf(b.id);
+      if (ia === -1 && ib === -1) return 0;
+      if (ia === -1) return 1;
+      if (ib === -1) return -1;
+      return ia - ib;
+    });
+
+  const moveCardInHand = (fromId, toId, cards) => {
+    if (!fromId || !toId || fromId === toId) return;
+    const ids = getOrderedHand(cards).map((c) => c.id);
+    const fromIdx = ids.indexOf(fromId);
+    const toIdx = ids.indexOf(toId);
+    if (fromIdx === -1 || toIdx === -1) return;
+    ids.splice(fromIdx, 1);
+    ids.splice(toIdx, 0, fromId);
+    setHandOrder(ids);
+  };
+  
 
   const handleDiscard = async () => {
     if (!isMyTurn || roomState.turnPhase !== 'action' || selectedCardIds.length !== 1) return;
@@ -2118,7 +2142,25 @@ export default function App() {
 
         <div className="overflow-x-auto px-8 sm:px-14 pt-8 pb-5">
           <div className="flex items-end justify-center gap-2 sm:gap-3 min-w-max mx-auto">
-            {myHand.map((card, idx) => (
+          {getOrderedHand(myHand).map((card, idx) => (
+  <div
+    key={card.id}
+    data-card-id={card.id}
+    style={{ touchAction: 'none' }}
+    onTouchStart={() => setDragCardId(card.id)}
+    onTouchMove={(e) => {
+      if (!dragCardId) return;
+      const t = e.touches[0];
+      const target = document.elementFromPoint(t.clientX, t.clientY)?.closest('[data-card-id]');
+      const targetId = target?.getAttribute('data-card-id');
+      if (targetId && targetId !== dragCardId) {
+        moveCardInHand(dragCardId, targetId, myHand);
+      }
+    }}
+    onTouchEnd={() => setDragCardId(null)}
+    className={dragCardId === card.id ? 'opacity-75 scale-105 transition-transform' : 'transition-transform'}
+  >
+
               <PlayingCard
                 key={card.id}
                 card={card}
