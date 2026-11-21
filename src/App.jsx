@@ -2170,6 +2170,8 @@ export default function App() {
                 style={{ animationDelay: `${idx * 40}ms` }}
                 className="animate-card-in"
               />
+    </div>
+      
             ))}
           </div>
         </div>
