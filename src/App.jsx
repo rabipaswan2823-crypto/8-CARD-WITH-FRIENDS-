@@ -1052,12 +1052,13 @@ export default function App() {
     setSelectedCardIds([]);
 
     if (remainingHand.length === 0) {
-      await finishRound(
-        { ...roomState, hands: { ...roomState.hands, [user.uid]: remainingHand }, openPile: nextOpenPile },
-        { type: 'win', winnerId: user.uid, reason: `${myPlayer.name} emptied their hand and won Round ${roomState.roundNumber}!` }
-      );
-      return;
+  await finishRound(
+    { ...roomState, hands: { ... } },
+    { type: 'win', winnerId: user... }
+  );
+  return;
     }
+    
 
     await writeEncryptedRoom(roomCode, aesKey, {
       ...roomState,
