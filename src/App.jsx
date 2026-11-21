@@ -1921,7 +1921,7 @@ export default function App() {
                 </span>
               )}
             </div>
-            <button
+            
               {isMyTurn && roomState.turnPhase === 'draw' && roomState.turnsCompleted === 0 && roomState.indicatorCard && (
   <button
     type="button"
@@ -1931,7 +1931,7 @@ export default function App() {
     Take {cardLabel(roomState.indicatorCard)}
   </button>
 )}
-
+    <button
               type="button"
               disabled={!isMyTurn || roomState.turnPhase !== 'draw'}
               onClick={() => handleDraw('unopen')}
