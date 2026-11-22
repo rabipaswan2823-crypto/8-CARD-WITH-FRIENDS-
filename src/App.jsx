@@ -2146,10 +2146,16 @@ export default function App() {
   <div
     key={card.id}
     data-card-id={card.id}
-    style={{ touchAction: 'none' }}
-    onTouchStart={() => setDragCardId(card.id)}
+        style={{ touchAction: dragCardId === card.id ? 'none' : 'pan-x' }}
+    onTouchStart={() => {
+      clearTimeout(window._dragTimer);
+      window._dragTimer = setTimeout(() => setDragCardId(card.id), 250);
+    }}
     onTouchMove={(e) => {
-      if (!dragCardId) return;
+      if (!dragCardId) {
+        clearTimeout(window._dragTimer);
+        return;
+      }
       const t = e.touches[0];
       const target = document.elementFromPoint(t.clientX, t.clientY)?.closest('[data-card-id]');
       const targetId = target?.getAttribute('data-card-id');
@@ -2157,7 +2163,11 @@ export default function App() {
         moveCardInHand(dragCardId, targetId, myHand);
       }
     }}
-    onTouchEnd={() => setDragCardId(null)}
+    onTouchEnd={() => {
+      clearTimeout(window._dragTimer);
+      setDragCardId(null);
+    }}
+
     className={dragCardId === card.id ? 'opacity-75 scale-105 transition-transform' : 'transition-transform'}
   >
 
