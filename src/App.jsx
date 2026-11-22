@@ -726,14 +726,25 @@ export default function App() {
 
   const writeEncryptedRoom = useCallback(
     async (code, keyObj, nextState, forceLocal = false) => {
-      if (keyObj) {
-        const encrypted = await encryptJSON(keyObj, nextState);
-        setRawCipherPreview(encrypted);
-        if (!forceLocal && !isLocalMode && db) {
-          await setDoc(doc(db, 'rooms_8cwf', code), { encrypted, updatedAt: Date.now() }, { merge: true });
-          return;
+            try {
+        if (keyObj) {
+          const encrypted = await encryptJSON(keyObj, nextState);
+          setRawCipherPreview(encrypted);
+          if (!forceLocal && !isLocalMode && db) {
+            await setDoc(
+              doc(db, 'rooms_8cwf', code),
+              { encrypted, updatedAt: Date.now() },
+              { merge: true }
+            );
+            return;
+          }
         }
-      }
+        setRoomState(nextState);
+      } catch (err) {
+        console.error('Sync failed:', err);
+        showToast('Network sync error! Dobara try karein.');
+            }
+      
       setRoomState(nextState);
     },
     [isLocalMode]
