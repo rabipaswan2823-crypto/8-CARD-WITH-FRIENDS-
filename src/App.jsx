@@ -745,11 +745,29 @@ export default function App() {
         showToast('Network sync error! Dobara try karein.');
             }
       
-      setRoomState(nextState);
+      
     },
     [isLocalMode]
   );
-
+  
+            const handleRefreshSync = async () => {
+    if (!roomCode || !aesKey || !db) return;
+    try {
+      showToast('Syncing game...');
+      const snap = await getDoc(doc(db, 'rooms_8cwf', roomCode));
+      if (snap.exists() && snap.data()?.encrypted) {
+        const freshState = await decryptJSON(aesKey, snap.data().encrypted);
+        setRoomState(freshState);
+        setSelectedCardIds([]);
+        showToast('Game synced!');
+      }
+    } catch (err) {
+      console.error('Manual sync failed:', err);
+      showToast('Sync failed! Net check karein.');
+    }
+  };
+  
+  
   useEffect(() => {
     if (isLocalMode || !roomCode || !aesKey || !db) return;
     const unsub = onSnapshot(doc(db, 'rooms_8cwf', roomCode), async (snap) => {
@@ -2150,6 +2168,13 @@ export default function App() {
             </div>
           )}
         </div>
+              <button
+        onClick={handleRefreshSync}
+        className="fixed top-3 right-3 z-50 px-3 py-1.5 rounded-full bg-emerald-600/90 text-white text-xs font-semibold shadow-lg active:scale-95"
+      >
+        🔄 Sync
+      </button>
+        
 
         <div className="overflow-x-auto px-8 sm:px-14 pt-8 pb-5">
           <div className="flex items-end justify-center gap-2 sm:gap-3 min-w-max mx-auto">
