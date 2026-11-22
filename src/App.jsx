@@ -283,7 +283,8 @@ function validateAndResolveMeld(cards, jokerRank) {
   const naturals = cards.filter((c) => !isWildJoker(c, jokerRank));
 
   // 1. Try SET (3 or 4 cards, same rank, distinct suits)
-  if (cards.length <= 4 || jokers.length > 0) {
+  if (naturals.length <= 4) {
+
     if (naturals.length === 0) {
       return {
         valid: true,
