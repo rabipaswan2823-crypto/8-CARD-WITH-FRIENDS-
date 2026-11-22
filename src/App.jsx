@@ -375,9 +375,7 @@ function validateAndApplyPush(meld, pushCards, direction, jokerRank) {
   }
 
   if (meld.type === 'set') {
-    if (meld.slots.length + pushCards.length > 4) {
-      return { valid: false, reason: 'A Set cannot exceed 4 cards.' };
-    }
+    
     const existingSuits = new Set(meld.slots.filter((s) => !s.isJoker).map((s) => s.suit));
     const newSlots = [...meld.slots];
     for (const c of pushCards) {
@@ -387,10 +385,8 @@ function validateAndApplyPush(meld, pushCards, direction, jokerRank) {
         if (c.rank !== meld.setRank) {
           return { valid: false, reason: `Card ${cardLabel(c)} does not match Set rank ${RANK_LABEL[meld.setRank]}.` };
         }
-        if (existingSuits.has(c.suit)) {
-          return { valid: false, reason: `Duplicate suit ${SUIT_SYMBOL[c.suit]} in Set.` };
-        }
-        existingSuits.add(c.suit);
+        
+  
         newSlots.push({ card: c, resolvedRank: meld.setRank, suit: c.suit, isJoker: false });
       }
     }
@@ -406,7 +402,6 @@ function validateAndApplyPush(meld, pushCards, direction, jokerRank) {
   if (!natPush.every((c) => c.suit === suit)) {
     return { valid: false, reason: `Pushed cards must match sequence suit ${SUIT_SYMBOL[suit]}.` };
   }
-
   const count = pushCards.length;
   let targetRanks = [];
   if (direction === 'left') {
